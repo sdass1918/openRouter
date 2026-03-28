@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TransactionState {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id            String              @id @default(uuid())
+  email         String              @unique
+  password      String
+  credits       Int                 @default(0)
+  api_keys      Apikeys[]
+  transactions  onRampTransaction[]
+  conversations Conversations[]
+}
+
+model Apikeys {
+  id            String          @id @default(uuid())
+  name          String
+  api_key       String          @unique
+  disabled      Boolean         @default(false)
+  deleted       Boolean         @default(false)
+  lastUsed      DateTime?
+  creditsConsumed Int           @default(0)
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  conversations Conversations[]
+}
+
+model Companies {
+  id      String   @id @default(uuid())
+  name    String
+  website String
+  models  Models[]
+}
+
+model Models {
+  id         String                   @id @default(uuid())
+  name       String
+  slug       String
+  company_id String
+  company    Companies                @relation(fields: [company_id], references: [id])
+  provider   Model_provider_mapping[]
+}
+
+model Providers {
+  id      String                   @id @default(uuid())
+  name    String
+  website String
+  models  Model_provider_mapping[]
+}
+
+model Model_provider_mapping {
+  id              String          @id @default(uuid())
+  modelId         String
+  providerId      String
+  inputTokenCost  Int
+  outputTokenCost Int
+  model           Models          @relation(fields: [modelId], references: [id])
+  provider        Providers       @relation(fields: [providerId], references: [id])
+  conversations   Conversations[]
+
+  @@unique([modelId, providerId])
+}
+
+model onRampTransaction {
+  id     String           @id @default(uuid())
+  userId String
+  user   User             @relation(fields: [userId], references: [id])
+  amount Int
+  status TransactionState
+}
+
+model Conversations {
+  id                        String                 @id @default(uuid())
+  userId                    String
+  api_key_id                String
+  model_provider_mapping_id String
+  input                     String
+  output                    String
+  inputTokenCount           Int
+  outputTokenCount          Int
+  user                      User                   @relation(fields: [userId], references: [id])
+  api_key                   Apikeys                @relation(fields: [api_key_id], references: [id])
+  model_provider            Model_provider_mapping @relation(fields: [model_provider_mapping_id], references: [id])
+}

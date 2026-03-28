@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import type { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Signup.css";
 
@@ -27,7 +26,7 @@ export function SignupPage() {
     }
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
 
@@ -48,7 +47,7 @@ export function SignupPage() {
     } finally {
       setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <main className="signup-page">
