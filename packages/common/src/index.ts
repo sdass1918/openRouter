@@ -27,6 +27,30 @@ export const apiKeyResponseSchema = z.object({
     disabled: z.boolean()
 })
 
+export const conversationSchema = z.array(z.object({
+    role: z.enum({
+        USER: 'user',
+        ASSISTANT: 'assistant'
+    }),
+    content: z.string()
+}))
+
+export const llmResponseSchema = z.object({ 
+    completions: z.object({
+        choices: z.array(
+            z.object({
+                message: z.object({
+                    content: z.string(),
+                }),
+            })
+        ),
+    }),
+    inputTokens: z.number(),
+    outputTokens: z.number()
+});
+
+export type llmResponse = z.infer<typeof llmResponseSchema>;
+export type messages = z.infer<typeof conversationSchema>;
 export type apiKeyInput = z.infer<typeof apiKeyInputSchema>;
 export type signinInput = z.infer<typeof signinInputSchema>;
 export type signupInput = z.infer<typeof signupInputSchema>;
