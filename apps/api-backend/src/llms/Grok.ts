@@ -1,7 +1,5 @@
-// import { createXai } from '@ai-sdk/xai';
 import OpenAI from "openai";
-// import { generateText } from 'ai';
-import { llm } from './base.js';
+import { llm } from './Base.js';
 import type { messages, llmResponse } from '@repo/common';
 
 const apiKey = process.env.GROK_API_KEY;
@@ -9,7 +7,6 @@ if(!apiKey) {
     throw new Error('Api key not available for gemini this time!')
 }
 
-// const xai = createXai({ apiKey });
 
 const client = new OpenAI({
     apiKey,

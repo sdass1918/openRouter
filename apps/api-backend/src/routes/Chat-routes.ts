@@ -1,20 +1,58 @@
 import { Router } from "express";
-import { gemini } from "../llms/gemini.js";
+import { gemini } from "../llms/Gemini.js";
 import { Grok } from "../llms/Grok.js";
+import { prisma } from "@repo/db";
 
 const router = Router();
 
 router.post('/', async (req, res) => {
-    // const providerModel = req.body.model;
-    // const model = providerModel.split('/')[1];
-    const model = req.body.model;
+    const apiKey = req.headers.apikey as string;
+    if(!apiKey) {
+        return res.status(403).send({
+            message: 'Please use a valid api key!'
+        })
+    }
+
+    const apiKeydb = await prisma.apikeys.findFirst({
+        where: {
+            api_key: apiKey,
+            deleted: false,
+            disabled: false
+        },
+        include: {
+            user: true
+        }
+    })
+
+    if(!apiKeydb) {
+        return res.status(403).send({
+            message: 'Please use a valid api key!'
+        })
+    }
+
+    const providerModel = req.body.model;
+    let [provider, model] = providerModel.split('/');
+    console.log(provider);
+    console.log(model);
+    if(provider === 'openai') {
+        model = providerModel;
+    }
     const messages = req.body.messages;
 
     try {
-        const response = await Grok.conversation(model, messages);
-        return res.status(200).send({
-            response
-        })
+        if(model.includes('/')) {
+            console.log('hiii');
+            const response = await Grok.conversation(model, messages);
+            return res.status(200).send({
+                response
+            })
+        }
+        else if(provider === 'google') {
+            const response = await gemini.conversation(model, messages);
+            return res.status(200).send({
+                response
+            })
+        }
     } catch(error) {
         console.log(error);
         return res.status(400).send({

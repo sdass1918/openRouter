@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import { authMiddleware } from 'primary-backend';
 import { chatRoutes } from './routes/Chat-routes.js';
 const app = express();
 

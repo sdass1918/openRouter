@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import dotenv from 'dotenv';
 import type { llmResponse, messages } from "@repo/common";
-import { llm } from "./base.js";
+import { llm } from "./Base.js";
 dotenv.config();
 
 const apiKey = process.env.GEMINI_API_KEY;
