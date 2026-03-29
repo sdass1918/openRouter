@@ -1,14 +1,28 @@
 import { Router } from "express";
-import { getModels, getProviderForModel, getProviders } from "../services/models-service.js";
+import type { ModelResponse } from "@repo/common";
+import { getAllData, getModels, getProviderForModel, getProviders } from "../services/models-service.js";
 const router = Router();
 
-router.get('/', async (req, res) => {
-    const user = (req as any).user?.userId;
-    if(!user) {
-        return res.status(401).send({
-            message: "Unauthorized access!"
-        })
+router.get('/models-and-providers', async (req, res) => {
+    try {
+        const models = await getAllData();
+        const response: ModelResponse = models.map((model) => ({
+            name: model.name,
+            slug: model.slug,
+            providers: model.provider.map((provider) => ({
+                provider: provider.provider.name,
+                providerWebsite: provider.provider.website,
+                inputTokenCost: provider.inputTokenCost,
+                outputTokenCost: provider.outputTokenCost
+            }))
+        }))
+        return res.status(200).json(response);
+    } catch (error) {
+        throw new Error();
     }
+})
+
+router.get('/', async (req, res) => {
     try {
         const models = await getModels();
         return res.status(200).send(models);
@@ -19,12 +33,6 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/providers', async (req, res) => {
-    const user = (req as any).user?.userId;
-    if(!user) {
-        return res.status(401).send({
-            message: "Unauthorized access!"
-        })
-    }
     try {
         const providers = await getProviders();
         return res.status(200).send(providers);
@@ -35,12 +43,6 @@ router.get('/providers', async (req, res) => {
 })
 
 router.get('/:id', async (req, res) => {
-    const user = (req as any).user?.userId;
-    if(!user) {
-        return res.status(401).send({
-            message: "Unauthorized access!"
-        })
-    }
     try {
         const providers = await getProviderForModel(req.params.id);
         if(!providers) {

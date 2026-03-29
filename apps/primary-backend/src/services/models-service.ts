@@ -20,3 +20,16 @@ export const getProviderForModel = async (modelId: string) => {
     return mappings.map(m => m.provider);
 }
 
+export const getAllData = async () => {
+    const response = await prisma.models.findMany({
+        include: {
+            provider: {
+                include: {
+                    provider: true
+                }
+            }
+        }
+    })
+    return response;
+}
+

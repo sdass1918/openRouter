@@ -49,6 +49,18 @@ export const llmResponseSchema = z.object({
     outputTokens: z.number()
 });
 
+export const ModelResponseScehma =  z.array(z.object({
+    name: z.string(),
+    slug: z.string(),
+    providers: z.array(z.object({
+        provider: z.string(),
+        providerWebsite: z.string(),
+        inputTokenCost: z.number(),
+        outputTokenCost: z.number()
+    }))
+}));
+
+export type ModelResponse = z.infer<typeof ModelResponseScehma>
 export type llmResponse = z.infer<typeof llmResponseSchema>;
 export type messages = z.infer<typeof conversationSchema>;
 export type apiKeyInput = z.infer<typeof apiKeyInputSchema>;
