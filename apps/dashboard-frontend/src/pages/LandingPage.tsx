@@ -35,8 +35,8 @@ export function LandingPage() {
               <Link to="/sign-up" className="landing-button landing-button--primary landing-button--cta">
                 Create your account
               </Link>
-              <Link to="/sign-in" className="landing-button landing-button--secondary landing-button--cta">
-                Sign in to dashboard
+              <Link to="/models" className="landing-button landing-button--secondary landing-button--cta">
+                Models
               </Link>
             </div>
 

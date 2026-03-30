@@ -16,7 +16,7 @@ app.use(express.json());
 app.use('/auth', authRoutes);
 
 app.use('/api-key', authMiddleware, apiKeyRoutes);
-app.use('/models', authMiddleware, modelsRouter);
+app.use('/models', modelsRouter);
 
 app.get('/', (req, res) => {
     res.send({

@@ -15,16 +15,12 @@ interface Model {
 export const Models = () => {
     const [models, setModels] = useState<Model[] | null>(null);
     const [loading, setLoading] = useState(true);
-    const token = localStorage.getItem('token');
     async function getModels() {
         try {
             console.log('hii');
             const response = await fetch(
-                "http://localhost:3000/models/models-and-providers", {
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                }
-            });
+                "http://localhost:3000/models/models-and-providers"
+            );
             if(response.status !== 200) {
                 console.log('The response is not available!')
                 throw new Error();
