@@ -2,6 +2,7 @@ import { Router } from "express";
 import { gemini } from "../llms/Gemini.js";
 import { Grok } from "../llms/Grok.js";
 import { prisma } from "@repo/db";
+import { Mistral } from "../llms/Mistral.js";
 
 const router = Router();
 
@@ -34,15 +35,20 @@ router.post('/', async (req, res) => {
     let [provider, model] = providerModel.split('/');
     console.log(provider);
     console.log(model);
-    if(provider === 'openai') {
+    if(provider === 'openai' || provider === 'mistralai') {
         model = providerModel;
     }
     const messages = req.body.messages;
 
     try {
-        if(model.includes('/')) {
-            console.log('hiii');
+        if(model.includes('/') && provider === 'openai') {
             const response = await Grok.conversation(model, messages);
+            return res.status(200).send({
+                response
+            })
+        }
+        else if(model.includes('/') && provider === 'mistralai') {
+            const response = await Mistral.conversation(model, messages);
             return res.status(200).send({
                 response
             })

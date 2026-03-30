@@ -19,7 +19,7 @@ enum TransactionState {
 }
 
 model User {
-  id            String              @id @default(uuid())
+  id            String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email         String              @unique
   password      String
   credits       Int                 @default(0)
@@ -29,45 +29,46 @@ model User {
 }
 
 model Apikeys {
-  id            String          @id @default(uuid())
-  name          String
-  api_key       String          @unique
-  disabled      Boolean         @default(false)
-  deleted       Boolean         @default(false)
-  lastUsed      DateTime?
-  creditsConsumed Int           @default(0)
-  userId        String
-  user          User            @relation(fields: [userId], references: [id])
-  conversations Conversations[]
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String
+  api_key         String          @unique
+  disabled        Boolean         @default(false)
+  deleted         Boolean         @default(false)
+  lastUsed        DateTime?
+  creditsConsumed Int             @default(0)
+  userId          String          @db.Uuid
+  user            User            @relation(fields: [userId], references: [id])
+  conversations   Conversations[]
 }
 
 model Companies {
-  id      String   @id @default(uuid())
+  id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name    String
   website String
   models  Models[]
 }
 
 model Models {
-  id         String                   @id @default(uuid())
+  id         String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name       String
   slug       String
-  company_id String
+  company_id String                   @db.Uuid
+  acitve     Boolean                  @default(true) 
   company    Companies                @relation(fields: [company_id], references: [id])
   provider   Model_provider_mapping[]
 }
 
 model Providers {
-  id      String                   @id @default(uuid())
+  id      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name    String
   website String
   models  Model_provider_mapping[]
 }
 
 model Model_provider_mapping {
-  id              String          @id @default(uuid())
-  modelId         String
-  providerId      String
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  modelId         String          @db.Uuid
+  providerId      String          @db.Uuid
   inputTokenCost  Int
   outputTokenCost Int
   model           Models          @relation(fields: [modelId], references: [id])
@@ -78,18 +79,18 @@ model Model_provider_mapping {
 }
 
 model onRampTransaction {
-  id     String           @id @default(uuid())
-  userId String
+  id     String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId String           @db.Uuid
   user   User             @relation(fields: [userId], references: [id])
   amount Int
   status TransactionState
 }
 
 model Conversations {
-  id                        String                 @id @default(uuid())
-  userId                    String
-  api_key_id                String
-  model_provider_mapping_id String
+  id                        String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                    String                 @db.Uuid
+  api_key_id                String                 @db.Uuid
+  model_provider_mapping_id String                 @db.Uuid
   input                     String
   output                    String
   inputTokenCount           Int

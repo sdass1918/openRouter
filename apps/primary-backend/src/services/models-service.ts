@@ -22,6 +22,9 @@ export const getProviderForModel = async (modelId: string) => {
 
 export const getAllData = async () => {
     const response = await prisma.models.findMany({
+        where: {
+            acitve: true
+        },
         include: {
             provider: {
                 include: {

@@ -28,10 +28,7 @@ export const apiKeyResponseSchema = z.object({
 })
 
 export const conversationSchema = z.array(z.object({
-    role: z.enum({
-        USER: 'user',
-        ASSISTANT: 'assistant'
-    }),
+    role: z.enum(['user', 'assistant', 'system']),
     content: z.string()
 }))
 
