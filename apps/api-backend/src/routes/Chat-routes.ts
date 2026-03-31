@@ -1,8 +1,9 @@
 import { Router } from "express";
 import { gemini } from "../llms/Gemini.js";
-import { Grok } from "../llms/Grok.js";
+import { Openai } from "../llms/Openai.js";
 import { prisma } from "@repo/db";
 import { Mistral } from "../llms/Mistral.js";
+import { conversationSchema } from "@repo/common"
 
 const router = Router();
 
@@ -31,30 +32,32 @@ router.post('/', async (req, res) => {
         })
     }
 
-    const providerModel = req.body.model;
-    let [provider, model] = providerModel.split('/');
-    console.log(provider);
+    const Model = req.body.model;
+    let [company, model] = Model.split('/');
+    console.log(company);
     console.log(model);
-    if(provider === 'openai' || provider === 'mistralai') {
-        model = providerModel;
+    const messages = conversationSchema.safeParse(req.body.messages);
+    if(!messages.success) {
+        return res.status(411).send({
+            message: messages.error
+        })
     }
-    const messages = req.body.messages;
 
     try {
-        if(model.includes('/') && provider === 'openai') {
-            const response = await Grok.conversation(model, messages);
+        if(company === 'openai') {
+            const response = await Openai.conversation(Model, messages.data);
             return res.status(200).send({
                 response
             })
         }
-        else if(model.includes('/') && provider === 'mistralai') {
-            const response = await Mistral.conversation(model, messages);
+        else if(company === 'mistralai') {
+            const response = await Mistral.conversation(Model, messages.data);
             return res.status(200).send({
                 response
             })
         }
-        else if(provider === 'google') {
-            const response = await gemini.conversation(model, messages);
+        else if(company === 'google') {
+            const response = await gemini.conversation(Model, messages.data);
             return res.status(200).send({
                 response
             })

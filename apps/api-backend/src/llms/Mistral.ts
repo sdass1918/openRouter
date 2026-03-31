@@ -9,7 +9,6 @@ const headers = {
   "Authorization": `Bearer ${process.env.MISTRAL_API_KEY}`,
   "Accept": stream ? "text/event-stream" : "application/json"
 };
-// "mistralai/mistral-small-4-119b-2603"
 
 
 export class Mistral extends llm {
@@ -34,7 +33,7 @@ export class Mistral extends llm {
                         {
                             message: {
                                 content: response.data.choices[0].message.content
-                            }
+                            } 
                         }
                     ]
                 },

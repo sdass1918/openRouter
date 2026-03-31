@@ -13,7 +13,7 @@ const client = new OpenAI({
     baseURL: "https://api.groq.com/openai/v1", 
 });
 
-export class Grok extends llm {
+export class Openai extends llm {
     static async conversation(model: string, message: messages): Promise<llmResponse> {
         try {
             const response = await client.responses.create({
